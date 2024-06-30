@@ -268,16 +268,13 @@ CUpti_PCSamplingConfigurationInfo ConfigureData::configureCollectionMode() {
 void ConfigureData::initialize(CUcontext context) {
   this->context = context;
   cupti::getContextId<true>(context, &contextId);
-  auto stallReasonsInfo = configureStallReasons();
-  auto samplingPeriodInfo = configureSamplingPeriod();
-  auto hardwareBufferInfo = configureHardwareBufferSize();
-  auto scratchBufferInfo = configureScratchBuffer();
-  auto samplingBufferInfo = configureSamplingBuffer();
-  auto startStopControlInfo = configureStartStopControl();
-  auto collectionModeInfo = configureCollectionMode();
-  std::vector<CUpti_PCSamplingConfigurationInfo> configurationInfos = {
-      stallReasonsInfo,   samplingPeriodInfo,   scratchBufferInfo,
-      hardwareBufferInfo, startStopControlInfo, collectionModeInfo};
+  configurationInfos.emplace_back(configureStallReasons());
+  configurationInfos.emplace_back(configureSamplingPeriod());
+  configurationInfos.emplace_back(configureHardwareBufferSize());
+  configurationInfos.emplace_back(configureScratchBuffer());
+  configurationInfos.emplace_back(configureSamplingBuffer());
+  configurationInfos.emplace_back(configureStartStopControl());
+  configurationInfos.emplace_back(configureCollectionMode());
   setConfigurationAttribute(context, configurationInfos);
 }
 

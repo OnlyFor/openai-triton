@@ -207,10 +207,10 @@ def test_pcsampling():
         for _ in range(1000):
             tl.store(y + offs, tl.load(x + offs))
 
-    x = torch.ones((1024, ), device="cuda", dtype=torch.float32)
-    y = torch.zeros_like(x)
     with tempfile.NamedTemporaryFile(delete=True, suffix=".hatchet") as f:
         proton.start(f.name.split(".")[0], hook="triton", backend="cupti_pcsampling")
+        x = torch.ones((1024, ), device="cuda", dtype=torch.float32)
+        y = torch.zeros_like(x)
         with proton.scope("test0"):
             foo[(1, )](x, y, x.size()[0], num_warps=4)
         x.zero_()

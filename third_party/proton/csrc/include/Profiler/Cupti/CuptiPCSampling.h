@@ -77,6 +77,9 @@ struct ConfigureData {
   std::map<size_t, size_t> stallReasonIndexToMetricIndex{};
   std::set<size_t> notIssuedStallReasonIndices{};
   CUpti_PCSamplingData pcSamplingData{};
+  // The memory storing configuration information has to be kept alive during
+  // the profiling session
+  std::vector<CUpti_PCSamplingConfigurationInfo> configurationInfos;
 };
 
 class CuptiPCSampling : public Singleton<CuptiPCSampling> {
