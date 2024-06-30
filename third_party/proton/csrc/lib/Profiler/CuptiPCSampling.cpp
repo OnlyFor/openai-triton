@@ -119,7 +119,7 @@ CUpti_PCSamplingData allocPCSamplingData(size_t collectNumPCs,
                                          size_t numValidStallReasons) {
   CUpti_PCSamplingData pcSamplingData{
       .size = sizeof(CUpti_PCSamplingData),
-      .collectNumPCs = collectNumPCs,
+      .collectNumPcs = collectNumPCs,
       .pPcData = static_cast<CUpti_PCSamplingPCData *>(
           std::calloc(collectNumPCs, sizeof(CUpti_PCSamplingPCData)))};
   for (size_t i = 0; i < collectNumPCs; ++i) {
