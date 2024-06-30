@@ -115,6 +115,21 @@ size_t matchStallReasonsToIndices(
   return numValidStalls;
 }
 
+CUpti_PCSamplingData allocPCSamplingData(size_t totalNumPcs,
+                                         size_t numValidStallReasons) {
+  CUpti_PCSamplingData pcSamplingData{
+      .size = sizeof(CUpti_PCSamplingData),
+      .totalNumPcs = totalNumPcs,
+      .pPcData = static_cast<CUpti_PCSamplingPCData *>(
+          std::calloc(totalNumPcs, sizeof(CUpti_PCSamplingPCData)))};
+  for (size_t i = 0; i < totalNumPcs; ++i) {
+    pcSamplingData.pPcData[i].stallReason =
+        static_cast<CUpti_PCSamplingStallReason *>(std::calloc(
+            numValidStallReasons, sizeof(CUpti_PCSamplingStallReason)));
+  }
+  return pcSamplingData;
+}
+
 void enablePCSampling(CUcontext context) {
   CUpti_PCSamplingEnableParams params = {
       .size = CUpti_PCSamplingEnableParamsSize,
@@ -207,6 +222,8 @@ CUpti_PCSamplingConfigurationInfo ConfigureData::configureSamplingBuffer() {
   CUpti_PCSamplingConfigurationInfo samplingPeriodInfo{};
   samplingPeriodInfo.attributeType =
       CUPTI_PC_SAMPLING_CONFIGURATION_ATTR_TYPE_SAMPLING_DATA_BUFFER;
+  this->pcSamplingData =
+      allocPCSamplingData(ScratchBufferPCCount, numValidStallReasons);
   samplingPeriodInfo.attributeData.samplingDataBufferData.samplingDataBuffer =
       &this->pcSamplingData;
   return samplingPeriodInfo;
@@ -252,16 +269,15 @@ void ConfigureData::initialize(CUcontext context) {
   this->context = context;
   cupti::getContextId<true>(context, &contextId);
   auto stallReasonsInfo = configureStallReasons();
-  // auto samplingPeriodInfo = configureSamplingPeriod();
-  // auto hardwareBufferInfo = configureHardwareBufferSize();
-  // auto scratchBufferInfo = configureScratchBuffer();
-  // auto samplingBufferInfo = configureSamplingBuffer();
+  auto samplingPeriodInfo = configureSamplingPeriod();
+  auto hardwareBufferInfo = configureHardwareBufferSize();
+  auto scratchBufferInfo = configureScratchBuffer();
+  auto samplingBufferInfo = configureSamplingBuffer();
   auto startStopControlInfo = configureStartStopControl();
   auto collectionModeInfo = configureCollectionMode();
   std::vector<CUpti_PCSamplingConfigurationInfo> configurationInfos = {
-      // stallReasonsInfo,   samplingPeriodInfo,   scratchBufferInfo,
-      // hardwareBufferInfo,
-      startStopControlInfo, collectionModeInfo};
+      stallReasonsInfo,   samplingPeriodInfo,   scratchBufferInfo,
+      hardwareBufferInfo, startStopControlInfo, collectionModeInfo};
   setConfigurationAttribute(context, configurationInfos);
 }
 
@@ -284,8 +300,7 @@ void CuptiPCSampling::initialize(CUcontext context) {
   if (contextInitialized.contain(contextId))
     return;
   enablePCSampling(context);
-  auto *configureData = getConfigureData(context);
-  configureData->initialize(context);
+  getConfigureData(context)->initialize(context);
   contextInitialized.insert(contextId);
 }
 
