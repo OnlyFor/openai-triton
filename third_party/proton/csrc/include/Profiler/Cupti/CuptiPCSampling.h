@@ -76,7 +76,6 @@ struct ConfigureData {
   uint32_t *stallReasonIndices{};
   std::map<size_t, size_t> stallReasonIndexToMetricIndex{};
   std::set<size_t> notIssuedStallReasonIndices{};
-  CUpti_PCSamplingData pcSamplingContextData{};
   CUpti_PCSamplingData pcSamplingData{};
   // The memory storing configuration information has to be kept alive during
   // the profiling session
