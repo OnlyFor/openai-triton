@@ -356,7 +356,8 @@ void CuptiPCSampling::processPCSamplingData(ConfigureData *configureData,
       }
     }
     // Get next data
-    getPCSamplingData(configureData->context, pcSamplingData);
+    if (pcSamplingData->remainingNumPcs > 0)
+      getPCSamplingData(configureData->context, pcSamplingData);
   }
 }
 
