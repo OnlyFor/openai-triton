@@ -115,14 +115,14 @@ size_t matchStallReasonsToIndices(
   return numValidStalls;
 }
 
-CUpti_PCSamplingData allocPCSamplingData(size_t totalNumPcs,
+CUpti_PCSamplingData allocPCSamplingData(size_t collectNumPCs,
                                          size_t numValidStallReasons) {
   CUpti_PCSamplingData pcSamplingData{
       .size = sizeof(CUpti_PCSamplingData),
-      .totalNumPcs = totalNumPcs,
+      .collectNumPCs = collectNumPCs,
       .pPcData = static_cast<CUpti_PCSamplingPCData *>(
-          std::calloc(totalNumPcs, sizeof(CUpti_PCSamplingPCData)))};
-  for (size_t i = 0; i < totalNumPcs; ++i) {
+          std::calloc(collectNumPCs, sizeof(CUpti_PCSamplingPCData)))};
+  for (size_t i = 0; i < collectNumPCs; ++i) {
     pcSamplingData.pPcData[i].stallReason =
         static_cast<CUpti_PCSamplingStallReason *>(std::calloc(
             numValidStallReasons, sizeof(CUpti_PCSamplingStallReason)));
