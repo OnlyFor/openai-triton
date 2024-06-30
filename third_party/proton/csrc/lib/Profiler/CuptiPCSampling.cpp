@@ -373,11 +373,11 @@ void CuptiPCSampling::stop(CUcontext context, uint64_t externId, bool isAPI) {
 }
 
 void CuptiPCSampling::finalize(CUcontext context) {
-  disablePCSampling(context);
   auto *configureData = getConfigureData(context);
   auto contextId = configureData->contextId;
   contextIdToConfigureData.erase(contextId);
   contextInitialized.erase(contextId);
+  disablePCSampling(context);
 }
 
 void CuptiPCSampling::loadModule(CUpti_ResourceData *resourceData) {
