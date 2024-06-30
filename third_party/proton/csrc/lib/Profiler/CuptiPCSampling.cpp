@@ -222,10 +222,12 @@ CUpti_PCSamplingConfigurationInfo ConfigureData::configureSamplingBuffer() {
   CUpti_PCSamplingConfigurationInfo samplingPeriodInfo{};
   samplingPeriodInfo.attributeType =
       CUPTI_PC_SAMPLING_CONFIGURATION_ATTR_TYPE_SAMPLING_DATA_BUFFER;
+  this->pcSamplingContextData =
+      allocPCSamplingData(ScratchBufferPCCount, numValidStallReasons);
   this->pcSamplingData =
       allocPCSamplingData(ScratchBufferPCCount, numValidStallReasons);
   samplingPeriodInfo.attributeData.samplingDataBufferData.samplingDataBuffer =
-      &this->pcSamplingData;
+      &this->pcSamplingContextData;
   return samplingPeriodInfo;
 }
 
@@ -314,11 +316,13 @@ void CuptiPCSampling::start(CUcontext context) {
 
 void CuptiPCSampling::processPCSamplingData(ConfigureData *configureData,
                                             uint64_t externId, bool isAPI) {
-  auto *pcSamplingData = &configureData->pcSamplingData;
+  auto *pcSamplingData = &configureData->pcSamplingContextData;
   auto &profiler = CuptiProfiler::instance();
   auto dataSet = profiler.getDataSet();
   while ((pcSamplingData->totalNumPcs > 0 ||
           pcSamplingData->remainingNumPcs > 0)) {
+    pcSamplingData = &configureData->pcSamplingData;
+    getPCSamplingData(configureData->context, pcSamplingData);
     // Handle data
     for (size_t i = 0; i < pcSamplingData->totalNumPcs; ++i) {
       auto *pcData = pcSamplingData->pPcData;
@@ -355,9 +359,6 @@ void CuptiPCSampling::processPCSamplingData(ConfigureData *configureData,
         }
       }
     }
-    // Get next data
-    if (pcSamplingData->remainingNumPcs > 0)
-      getPCSamplingData(configureData->context, pcSamplingData);
   }
 }
 
