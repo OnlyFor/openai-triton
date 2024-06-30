@@ -322,14 +322,15 @@ void CuptiProfiler::CuptiProfilerPimpl::callbackFn(void *userData,
                     << std::endl;
       }
       profiler.correlation.correlate(callbackData->correlationId, numInstances);
+      if (profiler.isPCSamplingEnabled())
+        pImpl->pcSampling.start(callbackData->context);
+    } else if (callbackData->callbackSite == CUPTI_API_EXIT) {
       if (profiler.isPCSamplingEnabled()) {
         // XXX: Conservatively stop every GPU kernel for now
         auto scopeId = profiler.correlation.externIdQueue.back();
         pImpl->pcSampling.stop(callbackData->context, scopeId,
                                !profiler.isOpInProgress());
-        pImpl->pcSampling.start(callbackData->context);
       }
-    } else if (callbackData->callbackSite == CUPTI_API_EXIT) {
       threadState.exitOp();
       profiler.correlation.submit(callbackData->correlationId);
     }
