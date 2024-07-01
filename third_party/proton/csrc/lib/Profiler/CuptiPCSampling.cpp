@@ -269,7 +269,8 @@ void ConfigureData::initialize(CUcontext context) {
   this->context = context;
   cupti::getContextId<true>(context, &contextId);
   configurationInfos.emplace_back(configureStallReasons());
-  configurationInfos.emplace_back(configureSamplingPeriod());
+  // XXX(Keren): Why it doesn't work?
+  // configurationInfos.emplace_back(configureSamplingPeriod());
   configurationInfos.emplace_back(configureHardwareBufferSize());
   configurationInfos.emplace_back(configureScratchBuffer());
   configurationInfos.emplace_back(configureSamplingBuffer());
