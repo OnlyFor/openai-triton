@@ -60,11 +60,11 @@ struct ConfigureData {
   CUpti_PCSamplingConfigurationInfo configureCollectionMode();
 
   // The amount of data reserved on the GPU
-  static constexpr uint32_t HardwareBufferSize = 4096 * 1024 * 1024;
+  static constexpr size_t HardwareBufferSize = 4096 * 1024 * 1024;
   // The amount of data copied from the hardware buffer each time
-  static constexpr uint32_t ScratchBufferSize = 16 * 1024 * 1024;
+  static constexpr size_t ScratchBufferSize = 16 * 1024 * 1024;
   // The number of PCs copied from the scratch buffer each time
-  static constexpr uint32_t ScratchBufferPCCount = 1024;
+  static constexpr size_t ScratchBufferPCCount = 1024;
   // The sampling period in cycles = 2^frequency
   static constexpr uint32_t DefaultFrequency = 10;
 
