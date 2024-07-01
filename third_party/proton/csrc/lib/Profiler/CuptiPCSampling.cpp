@@ -220,14 +220,14 @@ CUpti_PCSamplingConfigurationInfo ConfigureData::configureSamplingPeriod() {
 }
 
 CUpti_PCSamplingConfigurationInfo ConfigureData::configureSamplingBuffer() {
-  CUpti_PCSamplingConfigurationInfo samplingPeriodInfo{};
-  samplingPeriodInfo.attributeType =
+  CUpti_PCSamplingConfigurationInfo sampleBufferInfo{};
+  sampleBufferInfo.attributeType =
       CUPTI_PC_SAMPLING_CONFIGURATION_ATTR_TYPE_SAMPLING_DATA_BUFFER;
   this->pcSamplingData =
       allocPCSamplingData(ScratchBufferPCCount, numValidStallReasons);
-  samplingPeriodInfo.attributeData.samplingDataBufferData.samplingDataBuffer =
+  sampleBufferInfo.attributeData.samplingDataBufferData.samplingDataBuffer =
       &this->pcSamplingData;
-  return samplingPeriodInfo;
+  return sampleBufferInfo;
 }
 
 CUpti_PCSamplingConfigurationInfo ConfigureData::configureScratchBuffer() {
