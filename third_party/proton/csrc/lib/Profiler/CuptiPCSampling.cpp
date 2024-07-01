@@ -296,8 +296,6 @@ void CuptiPCSampling::initialize(CUcontext context) {
   std::unique_lock<std::mutex> lock(contextMutex);
   if (contextInitialized.contain(contextId))
     return;
-  // Make sure all the previous operations launched by the context are done
-  cuda::ctxSynchronize<true>();
   enablePCSampling(context);
   getConfigureData(context)->initialize(context);
   contextInitialized.insert(contextId);
