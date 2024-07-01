@@ -308,6 +308,12 @@ void CuptiPCSampling::start(CUcontext context) {
   if (pcSamplingStarted)
     return;
   initialize(context);
+  // Ensure all previous operations are completed
+  cuda::ctxSynchronize<true>();
+  // Clean up previous records
+  auto *configureData = getConfigureData(context);
+  configureData->pcSamplingData.totalNumPcs = 0;
+  configureData->pcSamplingData.remainingNumPcs = 0;
   startPCSampling(context);
   pcSamplingStarted = true;
 }
