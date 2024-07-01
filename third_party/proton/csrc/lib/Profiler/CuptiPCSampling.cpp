@@ -113,7 +113,7 @@ size_t matchStallReasonsToIndices(
   //    invalidIndex++;
   //  }
   //}
-  return numValidStalls;
+  return numStallReasons;
 }
 
 CUpti_PCSamplingData allocPCSamplingData(size_t collectNumPCs,
