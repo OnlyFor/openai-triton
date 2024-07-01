@@ -101,17 +101,18 @@ size_t matchStallReasonsToIndices(
       }
     }
   }
-  int invalidIndex = -1;
-  for (size_t i = 0; i < numStallReasons; i++) {
-    if (invalidIndex == -1 && !validIndex[i]) {
-      invalidIndex = i;
-    } else if (invalidIndex != -1 && validIndex[i]) {
-      std::swap(stallReasonIndices[invalidIndex], stallReasonIndices[i]);
-      std::swap(stallReasonNames[invalidIndex], stallReasonNames[i]);
-      validIndex[invalidIndex] = true;
-      invalidIndex++;
-    }
-  }
+  // XXX(Keren): somehow it doesn't work
+  // int invalidIndex = -1;
+  // for (size_t i = 0; i < numStallReasons; i++) {
+  //  if (invalidIndex == -1 && !validIndex[i]) {
+  //    invalidIndex = i;
+  //  } else if (invalidIndex != -1 && validIndex[i]) {
+  //    std::swap(stallReasonIndices[invalidIndex], stallReasonIndices[i]);
+  //    std::swap(stallReasonNames[invalidIndex], stallReasonNames[i]);
+  //    validIndex[invalidIndex] = true;
+  //    invalidIndex++;
+  //  }
+  //}
   return numValidStalls;
 }
 
@@ -269,8 +270,7 @@ void ConfigureData::initialize(CUcontext context) {
   this->context = context;
   cupti::getContextId<true>(context, &contextId);
   configurationInfos.emplace_back(configureStallReasons());
-  // XXX(Keren): Why it doesn't work?
-  // configurationInfos.emplace_back(configureSamplingPeriod());
+  configurationInfos.emplace_back(configureSamplingPeriod());
   configurationInfos.emplace_back(configureHardwareBufferSize());
   configurationInfos.emplace_back(configureScratchBuffer());
   configurationInfos.emplace_back(configureSamplingBuffer());
@@ -343,6 +343,9 @@ void CuptiPCSampling::processPCSamplingData(ConfigureData *configureData,
       auto &lineInfo = cubinData->lineInfo[key];
       for (size_t j = 0; j < pcData->stallReasonCount; ++j) {
         auto *stallReason = &pcData->stallReason[j];
+        if (!configureData->stallReasonIndexToMetricIndex.count(
+                stallReason->pcSamplingStallReasonIndex))
+          continue;
         for (auto *data : dataSet) {
           auto scopeId = externId;
           if (isAPI)
