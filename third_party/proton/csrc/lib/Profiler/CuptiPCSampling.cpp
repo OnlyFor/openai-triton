@@ -269,7 +269,7 @@ CUpti_PCSamplingConfigurationInfo ConfigureData::configureCollectionMode() {
 void ConfigureData::initialize(CUcontext context) {
   this->context = context;
   cupti::getContextId<true>(context, &contextId);
-  configurationInfos.emplace_back(configureStallReasons());
+  configureStallReasons();
   configurationInfos.emplace_back(configureSamplingPeriod());
   configurationInfos.emplace_back(configureHardwareBufferSize());
   configurationInfos.emplace_back(configureScratchBuffer());
