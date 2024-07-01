@@ -109,7 +109,7 @@ size_t matchStallReasonsToIndices(
       std::swap(stallReasonIndices[invalidIndex], stallReasonIndices[i]);
       std::swap(stallReasonNames[invalidIndex], stallReasonNames[i]);
       validIndex[invalidIndex] = true;
-      invalidIndex = i;
+      invalidIndex++;
     }
   }
   return numValidStalls;
